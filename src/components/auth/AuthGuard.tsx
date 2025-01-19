@@ -1,6 +1,7 @@
 import React from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { useUserStore } from '../../store/userStore';
+import { supabase } from '../../config/supabase';
 import { logger } from '../../services/logging';
 
 interface AuthGuardProps {
@@ -17,8 +18,9 @@ export const AuthGuard: React.FC<AuthGuardProps> = ({ children, requireAdmin = f
     return null;
   }
 
-  // Not authenticated - redirect to login
-  if (!isAuthenticated || !user) {
+  // Check Supabase session
+  const session = supabase.auth.session();
+  if (!session) {
     logger.debug('Unauthorized access attempt', {
       path: location.pathname,
       isAuthenticated,
@@ -29,7 +31,7 @@ export const AuthGuard: React.FC<AuthGuardProps> = ({ children, requireAdmin = f
   }
 
   // Check admin requirement
-  if (requireAdmin && !user.isAdmin) {
+  if (requireAdmin && !user?.is_admin) {
     logger.warn('Non-admin attempted to access admin route', {
       userId: user.id,
       path: location.pathname

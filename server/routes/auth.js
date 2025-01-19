@@ -1,45 +1,48 @@
 import express from 'express';
-import bcrypt from 'bcrypt';
-import { pool } from '../db.js';
+import { supabase } from '../../src/config/supabase.js';
 
 const router = express.Router();
 
 router.post('/login', async (req, res) => {
   const { email, password } = req.body;
-  const client = await pool.connect();
-  
+
   try {
-    const result = await client.query(
-      'SELECT * FROM users WHERE email = $1',
-      [email]
-    );
-    
-    const user = result.rows[0];
-    if (!user) {
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password
+    });
+
+    if (error) {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
 
-    const validPassword = await bcrypt.compare(password, user.password);
-    if (!validPassword) {
-      return res.status(401).json({ error: 'Invalid credentials' });
+    const { user } = data;
+    const { data: profile, error: profileError } = await supabase
+      .from('users')
+      .select('*')
+      .eq('id', user.id)
+      .single();
+
+    if (profileError) {
+      return res.status(500).json({ error: 'Failed to fetch user profile' });
     }
 
-    // Get user goals
-    const goalsResult = await client.query(
-      'SELECT goal FROM fitness_goals WHERE user_id = $1',
-      [user.id]
-    );
+    const { data: goals, error: goalsError } = await supabase
+      .from('fitness_goals')
+      .select('goal')
+      .eq('user_id', user.id);
 
-    const { password: _, ...userWithoutPassword } = user;
+    if (goalsError) {
+      return res.status(500).json({ error: 'Failed to fetch user goals' });
+    }
+
     res.json({
-      ...userWithoutPassword,
-      fitnessGoals: goalsResult.rows.map(row => row.goal)
+      ...profile,
+      fitnessGoals: goals.map(row => row.goal)
     });
   } catch (error) {
     console.error('Login error:', error);
     res.status(500).json({ error: 'Internal server error' });
-  } finally {
-    client.release();
   }
 });
 

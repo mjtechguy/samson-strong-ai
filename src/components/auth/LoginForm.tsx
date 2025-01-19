@@ -4,6 +4,7 @@ import { useUserStore } from '../../store/userStore';
 import { toast } from 'react-hot-toast';
 import { settingsService } from '../../services/settings/service';
 import { logger } from '../../services/logging';
+import { supabase } from '../../config/supabase';
 
 export const LoginForm: React.FC = () => {
   const navigate = useNavigate();
@@ -13,11 +14,35 @@ export const LoginForm: React.FC = () => {
   const [password, setPassword] = useState('');
   const [appTitle, setAppTitle] = useState('Fitness AI');
   const [logoUrl, setLogoUrl] = useState('');
-  const { login, isLoading, error: loginError } = useUserStore();
+  const { isLoading, error: loginError } = useUserStore();
 
   useEffect(() => {
     loadSettings();
   }, []);
+
+  useEffect(() => {
+    const checkSession = async () => {
+      const session = supabase.auth.session();
+      if (session) {
+        const { data: profile } = await supabase
+          .from('users')
+          .select('*')
+          .eq('id', session.user.id)
+          .single();
+        
+        if (profile) {
+          useUserStore.setState({
+            user: profile,
+            isAuthenticated: true,
+            error: null,
+            isLoading: false
+          });
+          navigate('/chat');
+        }
+      }
+    };
+    checkSession();
+  }, [navigate]);
 
   const loadSettings = async () => {
     try {
@@ -57,11 +82,31 @@ export const LoginForm: React.FC = () => {
 
     try {
       // Attempt login
-      const { needsProfile } = await login(email.trim(), password);
-      
-      if (needsProfile) {
+      const { error, user } = await supabase.auth.signInWithPassword({
+        email: email.trim(),
+        password
+      });
+
+      if (error) {
+        throw error;
+      }
+
+      const { data: profile } = await supabase
+        .from('users')
+        .select('*')
+        .eq('id', user.id)
+        .single();
+
+      if (!profile) {
         navigate('/profile');
       } else {
+        useUserStore.setState({
+          user: profile,
+          isAuthenticated: true,
+          error: null,
+          isLoading: false
+        });
+
         // Get return URL from location state or default to chat
         const from = (location.state as any)?.from?.pathname || '/chat';
         navigate(from, { replace: true });
