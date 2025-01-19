@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { UserCircleIcon } from '@heroicons/react/24/outline';
 import { useUserStore } from '../../store/userStore';
 import { ProgramImage } from '../programs/ProgramImage';
-import { FALLBACK_IMAGES } from '../../constants/images';
 import { settingsService } from '../../services/settings/service';
 import { logger } from '../../services/logging';
 

@@ -7,7 +7,7 @@ import {
 import { doc, setDoc, getDoc } from 'firebase/firestore';
 import { auth, db } from '../../../config/firebase';
 import { UserProfile } from '../../../types/user';
-import { AuthCredentials, AuthResponse, UserRegistrationData } from './types';
+import { AuthCredentials, AuthResponse } from './types';
 import { validateAuthCredentials } from './validation';
 
 export const registerUser = async (

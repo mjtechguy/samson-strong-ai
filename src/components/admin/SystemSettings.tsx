@@ -3,7 +3,6 @@ import { SystemSetting, settingsService } from '../../services/settings/service'
 import { toast } from 'react-hot-toast';
 import { logger } from '../../services/logging';
 import { validateOpenAIKey, getAvailableModels, OpenAIModel } from '../../services/openai/validation';
-import { PhotoIcon } from '@heroicons/react/24/outline';
 import { supabase } from '../../config/supabase';
 
 export const SystemSettings = () => {
@@ -11,7 +10,6 @@ export const SystemSettings = () => {
   const [modifiedSettings, setModifiedSettings] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [uploadingLogo, setUploadingLogo] = useState(false);
   const [validatingAPI, setValidatingAPI] = useState(false);
   const [availableModels, setAvailableModels] = useState<OpenAIModel[]>([]);
 
@@ -80,7 +78,6 @@ export const SystemSettings = () => {
     if (!file) return;
 
     try {
-      setUploadingLogo(true);
       const { data, error } = await supabase.storage.from('public').upload(`logos/${file.name}`, file, {
         cacheControl: '3600',
         upsert: true,
@@ -88,14 +85,12 @@ export const SystemSettings = () => {
 
       if (error) throw error;
 
-      const logoUrl = supabase.storage.from('public').getPublicUrl(data.path).publicURL;
+      const logoUrl = supabase.storage.from('public').getPublicUrl(data.path).publicUrl;
       handleInputChange('VITE_APP_LOGO_URL', logoUrl);
       toast.success('Logo uploaded successfully');
     } catch (error) {
       logger.error('Failed to upload logo', error);
       toast.error('Failed to upload logo');
-    } finally {
-      setUploadingLogo(false);
     }
   };
 

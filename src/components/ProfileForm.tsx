@@ -75,7 +75,7 @@ export const ProfileForm: React.FC = () => {
       
       // Update store
       useUserStore.setState({
-        user: userProfile,
+        user: profileData,
         isAuthenticated: true,
         error: null
       });

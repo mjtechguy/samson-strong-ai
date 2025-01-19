@@ -1,6 +1,6 @@
 import { ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
 import { storage } from '../../../config/firebase';
-import { UploadFileInput, UploadPDFInput, UploadProgramImageInput } from './types';
+import { UploadFileInput, UploadPDFInput, UploadProgramImageOptions } from './types';
 import { logger } from '../../logging';
 
 export class StorageRepository {
@@ -33,7 +33,7 @@ export class StorageRepository {
     }
   }
 
-  async uploadProgramImage({ file, programId }: UploadProgramImageInput): Promise<string> {
+  async uploadProgramImage({ file, programId }: UploadProgramImageOptions): Promise<string> {
     try {
       const extension = file.name.split('.').pop();
       const path = `programs/${programId}/image-${Date.now()}.${extension}`;

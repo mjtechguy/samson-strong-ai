@@ -11,7 +11,7 @@ export const initializeServices = async (): Promise<void> => {
 
     for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
       try {
-        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+        const { error: sessionError } = await supabase.auth.getSession();
         if (sessionError) throw sessionError;
         break;
       } catch (error) {
@@ -24,7 +24,7 @@ export const initializeServices = async (): Promise<void> => {
     }
 
     // Set up auth state change listener
-    supabase.auth.onAuthStateChange((event, session) => {
+    supabase.auth.onAuthStateChange((event) => {
       logger.debug('Auth state changed', { event });
       
       if (event === 'SIGNED_OUT') {

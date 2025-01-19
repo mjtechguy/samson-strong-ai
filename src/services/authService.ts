@@ -1,4 +1,3 @@
-import { UserProfile } from '../types/user';
 import { supabase } from '../config/supabase';
 import { logger } from './logging';
 
@@ -27,7 +26,7 @@ export const authService = {
       }
 
       // Create admin user
-      const { data: authData, error: signUpError } = await supabase.auth.signUp({
+      const { error: signUpError } = await supabase.auth.signUp({
         email: adminEmail,
         password: adminPassword,
         options: {
