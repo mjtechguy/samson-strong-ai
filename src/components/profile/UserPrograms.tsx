@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { UserProgram, Program } from '../../types/program';
-import { programService } from '../../services/firebase/programs';
+import { programService } from '../../services/programs/service';
 import { PDFDocument } from '../../utils/pdfGenerator';
 import { toast } from 'react-hot-toast';
 import { logger } from '../../services/logging';
