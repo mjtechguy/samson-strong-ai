@@ -117,6 +117,22 @@ export class SettingsService {
       throw error;
     }
   }
+
+  async getSupabaseUrl(): Promise<string> {
+    return this.getSetting('VITE_SUPABASE_URL');
+  }
+
+  async getSupabaseAnonKey(): Promise<string> {
+    return this.getSetting('VITE_SUPABASE_ANON_KEY');
+  }
+
+  async updateSupabaseUrl(url: string): Promise<void> {
+    await this.updateSetting('VITE_SUPABASE_URL', url);
+  }
+
+  async updateSupabaseAnonKey(key: string): Promise<void> {
+    await this.updateSetting('VITE_SUPABASE_ANON_KEY', key);
+  }
 }
 
 export const settingsService = new SettingsService();
