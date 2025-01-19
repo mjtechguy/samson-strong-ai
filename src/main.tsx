@@ -12,7 +12,7 @@ if (!root) {
   throw new Error('Root element not found');
 }
 
-// Initialize Firebase and render app
+// Initialize and render app
 const init = async () => {
   try {
     // Initialize app features
