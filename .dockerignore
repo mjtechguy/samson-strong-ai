@@ -31,9 +31,6 @@ Thumbs.db
 coverage
 
 # Docker
-Dockerfile
-Dockerfile.dev
-docker-compose.yml
 .dockerignore
 
 # Logs
