@@ -24,7 +24,7 @@ export const Sidebar: React.FC = () => {
   const user = useUserStore(state => state.user);
   const logoutFn = useUserStore(state => state.logout);
 
-  const isAdmin = user?.isAdmin === true;
+  const isAdmin = user?.is_admin === true;
 
   const handleLogout = async () => {
     try {

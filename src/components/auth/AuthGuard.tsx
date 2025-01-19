@@ -19,7 +19,7 @@ export const AuthGuard: React.FC<AuthGuardProps> = ({ children, requireAdmin = f
   }
 
   // Check Supabase session
-  const session = supabase.auth.session();
+  const { data: { session } } = supabase.auth.getSession();
   if (!session) {
     logger.debug('Unauthorized access attempt', {
       path: location.pathname,
@@ -31,7 +31,7 @@ export const AuthGuard: React.FC<AuthGuardProps> = ({ children, requireAdmin = f
   }
 
   // Check admin requirement
-  if (requireAdmin && !user?.is_admin) {
+  if (requireAdmin && !user?.isAdmin) {
     logger.warn('Non-admin attempted to access admin route', {
       userId: user.id,
       path: location.pathname

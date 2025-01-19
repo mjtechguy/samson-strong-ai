@@ -34,7 +34,7 @@ export class ProgramService {
       logger.debug('Creating program');
       
       const programId = uuidv4();
-      const imageUrl = await storageService.uploadProgramImage({
+      const imageUrl = await storageService.uploadImage({
         file: data.imageFile,
         programId
       });

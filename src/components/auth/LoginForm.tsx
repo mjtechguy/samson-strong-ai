@@ -22,7 +22,7 @@ export const LoginForm: React.FC = () => {
 
   useEffect(() => {
     const checkSession = async () => {
-      const session = supabase.auth.session();
+      const { data: { session } } = await supabase.auth.getSession();
       if (session) {
         const { data: profile } = await supabase
           .from('users')
@@ -82,7 +82,7 @@ export const LoginForm: React.FC = () => {
 
     try {
       // Attempt login
-      const { error, user } = await supabase.auth.signInWithPassword({
+      const { data: { user }, error } = await supabase.auth.signInWithPassword({
         email: email.trim(),
         password
       });
