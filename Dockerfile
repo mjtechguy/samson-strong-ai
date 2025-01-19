@@ -13,6 +13,12 @@ RUN npm ci
 # Copy source code
 COPY . .
 
+# Exclude .env and node_modules
+COPY . . --chown=node:node --exclude=.env --exclude=node_modules
+
+# Copy environment variables
+COPY .env .
+
 # Build the application
 RUN npm run build
 
